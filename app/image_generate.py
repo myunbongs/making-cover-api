@@ -6,7 +6,7 @@ import random
 from typing import Optional
 from fastapi import HTTPException
 
-from utils import image2string
+from .utils import image2string
 
 import io
 

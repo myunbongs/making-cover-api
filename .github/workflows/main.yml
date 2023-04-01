@@ -46,15 +46,15 @@ jobs:
   deploy:
     needs: build
     name: Deploy
-    runs-on: [ self-hosted, label-making-cover ]
+    runs-on: [ self-hosted, label-myunbngs ]
 
     steps:
       - name: Login to ghcr
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.MYUNBONGS_TOKEN }}
+          username: ${{ secrets.SERVER_ID }}
+          password: ${{ secrets.SERVER_PASSWORD }}
       
       - name: Docker run
         run: |

@@ -46,7 +46,7 @@ jobs:
   deploy:
     needs: build
     name: Deploy
-    runs-on: [ self-hosted, label-myunbngs ]
+    runs-on: [ self-hosted, label-making-cover ]
 
     steps:
       - name: Login to ghcr

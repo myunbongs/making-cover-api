@@ -37,9 +37,9 @@ def make_book_cover(cover: Cover):
     pipe = StableDiffusionPipeline.from_pretrained(model, torch_dtype=torch.float16).to(
         "cuda"
     )
-
-    pipe.enable_xformers_memory_efficient_attention()
     
+    pipe.enable_xformers_memory_efficient_attention()
+
     with torch.inference_mode():
         imgs = pipe(prompt=cover.prompt, negative_prompt=cover.negative_prompt, \
                 height=cover.height, width=cover.width, num_inference_steps=30, \

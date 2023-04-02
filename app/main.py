@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import JSONResponse
 
-from image_generate import Cover, make_book_cover
+from .image_generate import Cover, make_book_cover
 
 from PIL import Image
 

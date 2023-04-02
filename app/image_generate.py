@@ -9,6 +9,9 @@ from fastapi import HTTPException
 from .utils import image2string
 
 import io
+import os
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 class Cover(BaseModel):
     model: Optional[str]

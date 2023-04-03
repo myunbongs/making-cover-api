@@ -60,16 +60,6 @@ WORKDIR $HOME/workspace
 # Re-run ssh when the container restarts.
 RUN echo "sudo service ssh start > /dev/null" >> $HOME/.bashrc
 
-# Set up python environment with pyenv
-ARG PYTHON_VERSION 3.10.6
-RUN curl https://pyenv.run | bash
-ENV PYENV_ROOT="$HOME/.pyenv"
-ENV PATH "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
-ENV eval "$(pyenv init -)"
-RUN cd $HOME && /bin/bash -c "source .bashrc" && \
-    /bin/bash -c "pyenv install -v $PYTHON_VERSION" && \
-    /bin/bash -c "pyenv global $PYTHON_VERSION"
-
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt

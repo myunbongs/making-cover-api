@@ -47,7 +47,7 @@ RUN echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config && \
 # Create a non-root user and switch to it & Adding User to the sudoers File
 ARG USER_NAME user
 ARG USER_PASSWORD 0000
-RUN sudo adduser --disabled-password --gecos '' --shell /bin/bash $USER_NAME && \
+RUN sudo adduser --disabled-password --gecos "" --shell /bin/bash $USER_NAME && \
     echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER_NAME && \
     echo "$USER_NAME:$USER_PASSWORD" | chpasswd 
 USER $USER_NAME

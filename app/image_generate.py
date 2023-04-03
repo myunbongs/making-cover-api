@@ -9,9 +9,6 @@ from fastapi import HTTPException
 from .utils import image2string
 
 import io
-import os
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 class Cover(BaseModel):
     model: Optional[str]
@@ -49,7 +46,7 @@ def make_book_cover(cover: Cover):
                 num_images_per_prompt=cover.number_of_imgs, guidance_scale=7.5, generator=generator).images        
    
         for i, img in enumerate(imgs):
-            file_name = "./images/{}_{}_{}.png".format(cover.prompt, cover.seed, i)
+            file_name = "./app/images/{}_{}_{}.png".format(cover.prompt, cover.seed, i)
             img.save(file_name)
             cover.imgs.append(image2string(img))
 

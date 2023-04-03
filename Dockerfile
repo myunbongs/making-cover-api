@@ -39,6 +39,43 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends\
 ENV TZ=Asia/Seoul
 RUN sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
 
+# Create a non-root user and switch to it & Adding User to the sudoers File
+ARG USER_NAME user
+ARG USER_PASSWORD 0000
+RUN adduser --disabled-password --gecos '' --shell /bin/bash $USER_NAME && \
+    echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER_NAME && \
+    echo "$USER_NAME:$USER_PASSWORD" | chpasswd 
+USER $USER_NAME
+
+# All users can use /home/user as their home directory
+ENV HOME /home/$USER_NAME
+RUN mkdir $HOME/.cache $HOME/.config && \
+    chmod -R 777 $HOME 
+
+# Re-run ssh when the container restarts.
+RUN echo "sudo service ssh start > /dev/null" >> $HOME/.bashrc
+
+# Create a workspace directory
+RUN mkdir $HOME/workspace
+WORKDIR $HOME/workspace
+
+# Set up python environment with pyenv
+ARG PYTHON_VERSION 3.10.6
+RUN curl https://pyenv.run | bash
+ENV PYENV_ROOT="$HOME/.pyenv"
+ENV PATH "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+ENV eval "$(pyenv init -)"
+RUN cd $HOME && /bin/bash -c "source .bashrc" && \
+    /bin/bash -c "pyenv install -v $PYTHON_VERSION" && \
+    /bin/bash -c "pyenv global $PYTHON_VERSION"
+
+# Install Poetry
+ENV PATH "$HOME/.local/bin:$PATH"
+ENV PYTHON_KEYRING_BACKEND keyring.backends.null.Keyring
+RUN curl -sSL https://install.python-poetry.org | python - && \
+    poetry config virtualenvs.in-project true && \ 
+    poetry config virtualenvs.path "./.venv"
+
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt

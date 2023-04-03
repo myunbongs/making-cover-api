@@ -1,5 +1,6 @@
 FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
 
+
 # Remove any third-party apt sources to avoid issues with expiring keys.
 RUN rm -f /etc/apt/sources.list.d/*.list
 
@@ -39,6 +40,10 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends\
 ENV TZ=Asia/Seoul
 RUN sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
 
+# Add config for ssh connection
+RUN echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config && \
+    echo "PermitEmptyPasswords yes" >> /etc/ssh/sshd_config
+
 # Create a non-root user and switch to it & Adding User to the sudoers File
 ARG USER_NAME user
 ARG USER_PASSWORD 0000
@@ -52,12 +57,12 @@ ENV HOME /home/$USER_NAME
 RUN mkdir $HOME/.cache $HOME/.config && \
     chmod -R 777 $HOME 
 
-# Re-run ssh when the container restarts.
-RUN echo "sudo service ssh start > /dev/null" >> $HOME/.bashrc
-
 # Create a workspace directory
 RUN mkdir $HOME/workspace
 WORKDIR $HOME/workspace
+
+# Re-run ssh when the container restarts.
+RUN echo "sudo service ssh start > /dev/null" >> $HOME/.bashrc
 
 # Set up python environment with pyenv
 ARG PYTHON_VERSION 3.10.6
@@ -68,13 +73,6 @@ ENV eval "$(pyenv init -)"
 RUN cd $HOME && /bin/bash -c "source .bashrc" && \
     /bin/bash -c "pyenv install -v $PYTHON_VERSION" && \
     /bin/bash -c "pyenv global $PYTHON_VERSION"
-
-# Install Poetry
-ENV PATH "$HOME/.local/bin:$PATH"
-ENV PYTHON_KEYRING_BACKEND keyring.backends.null.Keyring
-RUN curl -sSL https://install.python-poetry.org | python - && \
-    poetry config virtualenvs.in-project true && \ 
-    poetry config virtualenvs.path "./.venv"
 
 WORKDIR /code
 

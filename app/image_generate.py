@@ -40,7 +40,7 @@ def making_cover_stable_diffusion_txt2img(txt2img: Txt2img):
     model = select_model(txt2img.model)
 
     generator = [torch.Generator(device="cuda").manual_seed(0) for i in range(txt2img.number_of_imgs)]
-    txt2img.seeds = generator
+    txt2img.seeds = [generator[i].seed() for i in range(txt2img.number_of_imgs)]
 
     pipe = StableDiffusionPipeline.from_pretrained(model, torch_dtype=torch.float16).to(
         "cuda"
@@ -57,7 +57,7 @@ def making_cover_stable_diffusion_txt2img(txt2img: Txt2img):
             if not os.path.exists('./app/images'):
                 os.makedirs('./app/images')
 
-            file_name = "./app/images/{}_{}_{}.png".format(txt2img.prompt, generator[i], i)
+            file_name = "./app/images/{}_{}_{}.png".format(txt2img.prompt, txt2img.seeds[i], i)
             img.save(file_name)
             txt2img.imgs.append(image2string(img))
 
@@ -71,7 +71,7 @@ def making_cover_stable_diffusion_img2img(img2img: Img2img):
     model = select_model(img2img.model)
 
     generator = [torch.Generator(device="cuda").manual_seed(0) for i in range(img2img.number_of_imgs)]
-    img2img.seeds = generator
+    img2img.seeds = [generator[i].seed() for i in range(img2img.number_of_imgs)]
 
     pipe = StableDiffusionImg2ImgPipeline.from_pretrained(model, torch_dtype=torch.float16).to(
         "cuda"
@@ -88,7 +88,7 @@ def making_cover_stable_diffusion_img2img(img2img: Img2img):
         for i, img in enumerate(imgs):
             if not os.path.exists('./app/images'):
                 os.makedirs('./app/images')
-            file_name = "./app/images/{}_{}_{}.png".format(img2img.prompt, generator[i], i)
+            file_name = "./app/images/{}_{}_{}.png".format(img2img.prompt, img2img.seeds[i], i)
             img.save(file_name)
             img2img.imgs.append(image2string(img))
     return img2img

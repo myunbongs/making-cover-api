@@ -54,7 +54,7 @@ def making_cover_stable_diffusion_txt2img(txt2img: Txt2img):
                 num_images_per_prompt=txt2img.number_of_imgs, guidance_scale=txt2img.guidance_scale, generator=generator).images        
    
         for i, img in enumerate(imgs):
-            file_name = "./app/images/{}_{}_{}.png".format(txt2img.prompt, generator.seed[i], i)
+            file_name = "./app/images/{}_{}_{}.png".format(txt2img.prompt, generator[i], i)
             img.save(file_name)
             txt2img.imgs.append(image2string(img))
 
@@ -83,7 +83,7 @@ def making_cover_stable_diffusion_img2img(img2img: Img2img):
                 generator=generator).images   
    
         for i, img in enumerate(imgs):
-            file_name = "./app/images/{}_{}_{}.png".format(img2img.prompt, generator.seed[i], i)
+            file_name = "./app/images/{}_{}_{}.png".format(img2img.prompt, generator[i], i)
             img.save(file_name)
             img2img.imgs.append(image2string(img))
 

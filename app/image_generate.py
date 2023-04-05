@@ -40,7 +40,7 @@ def making_cover_stable_diffusion_txt2img(txt2img: Txt2img):
     model = select_model(txt2img.model)
 
     generator = [torch.Generator(device="cuda").manual_seed(0) for i in range(txt2img.number_of_imgs)]
-    img2img.seeds = generator
+    txt2img.seeds = generator
 
     pipe = StableDiffusionPipeline.from_pretrained(model, torch_dtype=torch.float16).to(
         "cuda"
